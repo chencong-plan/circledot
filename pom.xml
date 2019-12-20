@@ -29,12 +29,19 @@
         <commons-lang3-version>3.9</commons-lang3-version>
         <lombok-version>1.18.8</lombok-version>
         <swagger2-version>2.2.2</swagger2-version>
+        <slf4j-api-version>1.7.26</slf4j-api-version>
 
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!--self start-->
+
+            <dependency>
+                <groupId>cc.ccoder.circledot</groupId>
+                <artifactId>circledot-core-sequence</artifactId>
+                <version>${circledot-version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>cc.ccoder.circledot</groupId>
@@ -89,6 +96,12 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok-version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api-version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

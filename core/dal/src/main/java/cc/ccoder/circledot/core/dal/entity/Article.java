@@ -1,5 +1,6 @@
 package cc.ccoder.circledot.core.dal.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -17,7 +18,10 @@ import java.util.Date;
 @TableName(value = "t_article")
 public class Article implements Serializable {
 
-    @TableId(value = "article_id")
+    /**
+     * 主键,使用ASSIGN_ID 自定义主键生成策略
+     */
+    @TableId(value = "article_id", type = IdType.ASSIGN_ID)
     private Long articleId;
 
     @TableField(value = "user_id")

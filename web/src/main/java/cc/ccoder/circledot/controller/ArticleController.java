@@ -1,7 +1,6 @@
 package cc.ccoder.circledot.controller;
 
 import cc.ccoder.circledot.core.dal.entity.Article;
-import cc.ccoder.circledot.core.dal.repository.IArticleRepository;
 import cc.ccoder.circledot.service.IArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
