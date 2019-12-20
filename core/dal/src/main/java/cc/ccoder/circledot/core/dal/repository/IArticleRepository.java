@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
  * @author: chencong
  * @date: 2019/12/19 17:40
  */
-@Repository
+
 public interface IArticleRepository extends IService<Article> {
 }
