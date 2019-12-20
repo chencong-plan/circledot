@@ -1,9 +1,9 @@
 package cc.ccoder.circledot.service.impl;
 
 import cc.ccoder.circledot.core.dal.entity.Article;
-import cc.ccoder.circledot.core.dal.repository.IArticleRepository;
+import cc.ccoder.circledot.core.dal.mapper.ArticleMapper;
 import cc.ccoder.circledot.service.IArticleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,14 +13,10 @@ import java.util.List;
  * @date: 2019/12/19 17:47
  */
 @Service
-public class IArticleServiceImpl implements IArticleService {
-
-    @Autowired
-    private IArticleRepository iArticleRepository;
-
+public class IArticleServiceImpl extends ServiceImpl<ArticleMapper,Article> implements IArticleService {
 
     @Override
-    public List<Article> list() {
-        return iArticleRepository.list();
+    public List<Article> listArticle() {
+        return list();
     }
 }
