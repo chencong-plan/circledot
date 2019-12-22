@@ -26,6 +26,9 @@ public class Category implements Serializable {
     @TableField(value = "name")
     private String name;
 
+    @TableField(value = "status")
+    private String status;
+
     @TableField(value = "gmt_create")
     private Date gmtCreate;
 

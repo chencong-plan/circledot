@@ -24,6 +24,10 @@ public class ServerResponse<T> {
         return ResponseCode.SUCCESS.getCode().equals(this.code);
     }
 
+    public boolean dataNotNull() {
+        return this.data != null;
+    }
+
     private ServerResponse() {
     }
 

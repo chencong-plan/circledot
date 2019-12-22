@@ -8,7 +8,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * @author chencong
  */
-@EnableSwagger2
 @SpringBootApplication
 @MapperScan("cc.ccoder.circledot.core.dal.mapper")
 public class CircledotApplication {

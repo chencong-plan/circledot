@@ -14,7 +14,7 @@ import java.util.Date;
  * @date: 2019/12/20 15:14
  */
 @Data
-@TableName
+@TableName(value = "t_user_auth")
 public class UserAuth implements Serializable {
 
     @TableId(value = "auth_id", type = IdType.ASSIGN_ID)

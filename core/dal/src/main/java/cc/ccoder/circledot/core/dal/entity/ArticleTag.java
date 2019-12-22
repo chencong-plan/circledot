@@ -25,4 +25,7 @@ public class ArticleTag implements Serializable {
     @TableField(value = "tag_id")
     private Long tagId;
 
+    @TableField(value = "tag_name")
+    private String tagName;
+
 }
