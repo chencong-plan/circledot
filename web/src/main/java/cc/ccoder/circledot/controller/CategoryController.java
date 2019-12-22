@@ -24,7 +24,7 @@ public class CategoryController extends AbstractController {
     private ICategoryService categoryService;
 
     @RequestMapping(value = "/list")
-    @ApiOperation(value = "分类列表")
+    @ApiOperation(value = "分类列表",httpMethod = "GET")
     public ServerResponse listCategory() {
         List<Category> categoryList = categoryService.list();
         return ServerResponse.success(categoryList);
