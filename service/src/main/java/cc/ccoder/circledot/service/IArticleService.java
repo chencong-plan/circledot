@@ -2,6 +2,8 @@ package cc.ccoder.circledot.service;
 
 import cc.ccoder.circledot.core.common.response.ServerResponse;
 import cc.ccoder.circledot.core.dal.entity.Article;
+import cc.ccoder.circledot.core.dal.entity.Comment;
+import cc.ccoder.circledot.service.vo.ArticleCommentVo;
 import cc.ccoder.circledot.service.vo.TagVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -28,4 +30,8 @@ public interface IArticleService  extends IService<Article> {
     ServerResponse articleDetail(Long articleId);
 
     List<TagVo> articleTagList(Long articleId);
+
+    ServerResponse listCommentVo(Long articleId,Page<Comment> page);
+
+    ServerResponse listCommentReply(Long commentId);
 }

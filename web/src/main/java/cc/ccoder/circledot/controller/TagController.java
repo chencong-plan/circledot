@@ -3,10 +3,10 @@ package cc.ccoder.circledot.controller;
 import cc.ccoder.circledot.core.common.response.ServerResponse;
 import cc.ccoder.circledot.core.dal.entity.Tag;
 import cc.ccoder.circledot.service.ITagService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -17,13 +17,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/tag")
+@Api(value = "标签接口(/tag)",tags = {"tag"})
 public class TagController extends AbstractController {
 
     @Autowired
     private ITagService tagService;
 
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list")
     @ApiOperation(value = "查询标签列表", httpMethod = "GET")
     public ServerResponse listTag() {
         List<Tag> tagList = tagService.list();

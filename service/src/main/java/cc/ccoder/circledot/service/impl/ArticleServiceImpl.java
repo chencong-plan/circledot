@@ -4,25 +4,20 @@ import cc.ccoder.circledot.core.common.enums.LikeType;
 import cc.ccoder.circledot.core.common.enums.OrderByType;
 import cc.ccoder.circledot.core.common.response.ServerResponse;
 import cc.ccoder.circledot.core.common.util.StringUtils;
-import cc.ccoder.circledot.core.dal.entity.Article;
-import cc.ccoder.circledot.core.dal.entity.ArticleTag;
-import cc.ccoder.circledot.core.dal.entity.Category;
-import cc.ccoder.circledot.core.dal.entity.Comment;
+import cc.ccoder.circledot.core.dal.entity.*;
 import cc.ccoder.circledot.core.dal.mapper.ArticleMapper;
 import cc.ccoder.circledot.service.*;
 import cc.ccoder.circledot.service.converter.TagConverter;
-import cc.ccoder.circledot.service.vo.ArticleDetailVo;
-import cc.ccoder.circledot.service.vo.TagVo;
-import cc.ccoder.circledot.service.vo.UserInfoVo;
+import cc.ccoder.circledot.service.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,6 +42,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Autowired
     private ICategoryService categoryService;
+
+    @Autowired
+    private IReplyService replyService;
 
 
     @Override
@@ -110,8 +108,41 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public List<TagVo> articleTagList(Long articleId) {
         List<ArticleTag> articleTagList = articleTagService.selectByArticleId(articleId);
-        List<TagVo> tagVoList = TagConverter.converterTagVo(articleTagList);
-        return tagVoList;
+        return TagConverter.converterTagVo(articleTagList);
+    }
+
+    @Override
+    public ServerResponse listCommentVo(Long articleId, Page<Comment> page) {
+        Article article = this.getById(articleId);
+        if (article == null) {
+            return ServerResponse.errorValidate("该文章标号对应文章不存在");
+        }
+        Page<Comment> commentPage = commentService.page(page, new LambdaQueryWrapper<Comment>().eq(Comment::getArticleId, articleId));
+        List<ArticleCommentVo> commentVoList = new ArrayList<>();
+        commentPage.getRecords().forEach(x -> {
+            ArticleCommentVo vo = new ArticleCommentVo();
+            BeanUtils.copyProperties(x, vo);
+            commentVoList.add(vo);
+        });
+        Page<ArticleCommentVo> articleCommentVoPage = new Page<>();
+        BeanUtils.copyProperties(commentPage, articleCommentVoPage);
+        articleCommentVoPage.setRecords(commentVoList);
+        return ServerResponse.success(articleCommentVoPage);
+    }
+
+    @Override
+    public ServerResponse listCommentReply(Long commentId) {
+        List<Reply> replyList = replyService.list();
+        if(replyList.isEmpty()){
+            return ServerResponse.success("该评论暂无回复");
+        }
+        List<ReplyVo> replyVoList = new ArrayList<>();
+        replyList.forEach(x -> {
+            ReplyVo vo = new ReplyVo();
+            BeanUtils.copyProperties(x, vo);
+            replyVoList.add(vo);
+        });
+        return ServerResponse.success(replyVoList);
     }
 
 }

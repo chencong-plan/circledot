@@ -32,6 +32,9 @@ public class Reply implements Serializable {
     @TableField(value = "content")
     private String content;
 
+    @TableField(value = "email")
+    private String email;
+
     @TableField(value = "status")
     private String status;
 

@@ -1,5 +1,8 @@
 package cc.ccoder.circledot.core.common.response;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author: chencong
  * @date: 2019/12/20 17:27
@@ -48,6 +51,14 @@ public enum  ResponseCode {
     ResponseCode(String code, String msg) {
         this.code = code;
         this.msg = msg;
+    }
+
+    public static Map<String,Object> toMap(){
+        Map<String,Object> map = new HashMap<>();
+        for (ResponseCode item : ResponseCode.values()) {
+            map.put(item.getCode(),item.getMsg());
+        }
+        return map;
     }
 
     public String getCode() {
