@@ -16,9 +16,19 @@ public enum  ResponseCode {
     INVALID_PARAM("400","invalid_param"),
 
     /**
-     * 仓储异常
+     * data_format_exception
      */
-    REPOSITORY_EXCEPTION("500","repository_exception"),
+    DATA_FORMAT_EXCEPTION("401","data_format_exception"),
+
+    /**
+     * http_method_not_support
+     */
+    HTTP_METHOD_NOT_SUPPORT("300","http_method_not_support"),
+
+    /**
+     * 系统异常
+     */
+    SYSTEM_EXCEPTION("500","system_exception"),
 
 
     /**

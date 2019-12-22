@@ -63,6 +63,10 @@ public class ServerResponse<T> {
         return new ServerResponse<T>(responseCode.getCode(), responseCode.getMsg());
     }
 
+    public static <T> ServerResponse error(ResponseCode responseCode,String message) {
+        return new ServerResponse<T>(responseCode.getCode(), message);
+    }
+
     public static <T> ServerResponse errorValidate(String message) {
         return new ServerResponse<T>(ResponseCode.INVALID_PARAM.getCode(), message);
     }
