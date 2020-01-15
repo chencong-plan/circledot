@@ -1,21 +1,16 @@
 package cc.ccoder.circledot.service.impl;
 
 import cc.ccoder.circledot.core.common.consts.Const;
-import cc.ccoder.circledot.core.common.enums.IdentityType;
 import cc.ccoder.circledot.core.common.response.ServerResponse;
 import cc.ccoder.circledot.core.dal.entity.*;
 import cc.ccoder.circledot.core.dal.mapper.UserMapper;
 import cc.ccoder.circledot.service.*;
-import cc.ccoder.circledot.service.request.LoginRequest;
 import cc.ccoder.circledot.service.vo.UserInfoVo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.google.common.collect.Collections2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.tools.java.Identifier;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
