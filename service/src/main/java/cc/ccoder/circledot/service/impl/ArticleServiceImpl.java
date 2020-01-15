@@ -15,6 +15,7 @@ import cc.ccoder.circledot.service.converter.TagConverter;
 import cc.ccoder.circledot.service.request.ArticleRequest;
 import cc.ccoder.circledot.service.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -22,6 +23,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.collect.Maps;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,6 +95,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public ServerResponse articleDetail(Long articleId) {
+        updateArticleView(articleId);
         Article article = this.getById(articleId);
         if (article == null) {
             return ServerResponse.errorValidate("该编号文章不存在");
@@ -115,6 +118,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleDetailVo.setTagList(TagConverter.converterTagVo(articleTagList));
 
         return ServerResponse.success(articleDetailVo);
+    }
+
+    @Async
+    public void updateArticleView(Long articleId){
+        this.update(new LambdaUpdateWrapper<Article>().setSql("view_count = view_count + 1").eq(Article::getArticleId,articleId));
     }
 
     @Override

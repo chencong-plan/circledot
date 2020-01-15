@@ -2,9 +2,13 @@ package cc.ccoder.circledot.controller;
 
 import cc.ccoder.circledot.core.common.response.ServerResponse;
 import cc.ccoder.circledot.service.IUserService;
+import cc.ccoder.circledot.service.request.LoginRequest;
+import cc.ccoder.circledot.service.vo.UserInfoVo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

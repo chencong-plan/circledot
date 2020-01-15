@@ -12,4 +12,6 @@ import java.util.List;
 public interface IUserAuthService extends IService<UserAuth> {
 
     List<UserAuth> selectByUserId(long userId);
+
+    List<UserAuth> listByIdentifier(String identifier);
 }

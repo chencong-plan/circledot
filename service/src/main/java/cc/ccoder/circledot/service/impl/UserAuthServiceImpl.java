@@ -1,5 +1,6 @@
 package cc.ccoder.circledot.service.impl;
 
+import cc.ccoder.circledot.core.common.util.StringUtils;
 import cc.ccoder.circledot.core.dal.entity.UserAuth;
 import cc.ccoder.circledot.core.dal.mapper.UserAuthMapper;
 import cc.ccoder.circledot.service.IUserAuthService;
@@ -18,5 +19,12 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthMapper, UserAuth> i
     @Override
     public List<UserAuth> selectByUserId(long userId) {
         return list(new LambdaQueryWrapper<UserAuth>().eq(UserAuth::getUserId, userId));
+    }
+
+    @Override
+    public List<UserAuth> listByIdentifier(String identifier) {
+        LambdaQueryWrapper<UserAuth> wrapper = new LambdaQueryWrapper<UserAuth>()
+                .eq(StringUtils.isNotBlank(identifier), UserAuth::getIdentifier, identifier);
+        return this.list(wrapper);
     }
 }

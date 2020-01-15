@@ -25,6 +25,8 @@ public class UserInfoVo implements Serializable {
 
     private Date gmtCreate;
 
+    private String sign;
+
     private Integer viewCount;
 
     private Integer likeCount;

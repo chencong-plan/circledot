@@ -2,6 +2,8 @@ package cc.ccoder.circledot.service;
 
 import cc.ccoder.circledot.core.common.response.ServerResponse;
 import cc.ccoder.circledot.core.dal.entity.User;
+import cc.ccoder.circledot.service.request.LoginRequest;
+import cc.ccoder.circledot.service.vo.UserInfoVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
