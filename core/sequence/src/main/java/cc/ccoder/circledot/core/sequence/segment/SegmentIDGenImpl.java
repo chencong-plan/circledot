@@ -24,45 +24,45 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date: 2019/12/20 10:50
  */
 public class SegmentIDGenImpl implements IDGen {
-    private static final Logger logger                             = LoggerFactory
+    private static final Logger logger = LoggerFactory
             .getLogger(SegmentIDGenImpl.class);
 
     /**
      * IDCache未初始化成功时的异常码
      */
-    private static final long          EXCEPTION_ID_IDCACHE_INIT_FALSE    = -1;
+    private static final long EXCEPTION_ID_IDCACHE_INIT_FALSE = -1;
     /**
      * key不存在时的异常码
      */
-    private static final long          EXCEPTION_ID_KEY_NOT_EXISTS        = -2;
+    private static final long EXCEPTION_ID_KEY_NOT_EXISTS = -2;
     /**
      * SegmentBuffer中的两个Segment均未从DB中装载时的异常码
      */
-    private static final long          EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL = -3;
+    private static final long EXCEPTION_ID_TWO_SEGMENTS_ARE_NULL = -3;
     /**
      * 最大步长不超过100,0000
      */
-    private static final int           MAX_STEP                           = 1000000;
+    private static final int MAX_STEP = 1000000;
 
     /**
      * 加载最长等待次数 1次等10ms,默认1000次等于15秒
      */
-    private static final int           WAIT_TIMES                         = 1500;
+    private static final int WAIT_TIMES = 1500;
 
     /**
      * 一个Segment维持时间为15分钟
      */
-    private static final long          SEGMENT_DURATION                   = 15 * 60 * 1000L;
-    private ExecutorService service                            = new ThreadPoolExecutor(
+    private static final long SEGMENT_DURATION = 15 * 60 * 1000L;
+    private ExecutorService service = new ThreadPoolExecutor(
             5, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
             new UpdateThreadFactory());
-    private volatile boolean           initOK                             = false;
-    private Map<String, SegmentBuffer> cache                              = new ConcurrentHashMap<String, SegmentBuffer>();
+    private volatile boolean initOK = false;
+    private Map<String, SegmentBuffer> cache = new ConcurrentHashMap<String, SegmentBuffer>();
     private IDAllocDao dao;
 
     @Override
     public long get(String sequence) {
-        return get(sequence,true);
+        return get(sequence, true);
     }
 
     private long get(String sequence, boolean isRetry) {

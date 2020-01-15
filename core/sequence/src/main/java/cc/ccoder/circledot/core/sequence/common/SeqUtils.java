@@ -12,7 +12,7 @@ import java.util.Date;
 public class SeqUtils {
 
     /** 序列号长度 */
-    public static int SEQ_NO_RIGHT_LEN = 9;
+    public static int SEQ_NO_RIGHT_LEN = 5;
 
     private static final String DATE_PATTERN = "yyyyMMdd";
 
@@ -28,15 +28,15 @@ public class SeqUtils {
     }
 
     /**
-     * 返回前八后九的订单号，规则：8位日期+9位序列
+     * 返回前八后九的订单号，规则：8位日期+序列号
      *
      * @param nextSequenceId
      *            序列值
-     * @return 17位订单号
+     * @return 13位订单号
      */
     public static String genSeqNo(long nextSequenceId) {
         String date = DateFormatUtils.format(new Date(), DATE_PATTERN);
-        String nextSeq = String.format("%09d", nextSequenceId);
+        String nextSeq = String.format("%05d", nextSequenceId);
         String seq = StringUtils.substring(nextSeq, nextSeq.length() - SEQ_NO_RIGHT_LEN);
         return date + seq;
     }

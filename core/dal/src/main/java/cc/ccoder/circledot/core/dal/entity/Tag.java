@@ -20,9 +20,6 @@ public class Tag implements Serializable {
     @TableId(value = "tag_id",type = IdType.ASSIGN_ID)
     private Long tagId;
 
-    @TableField(value = "category_id")
-    private Long categoryId;
-
     @TableField(value = "tag_name")
     private String tagName;
 

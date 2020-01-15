@@ -1,25 +1,32 @@
 package cc.ccoder.circledot.service.impl;
 
+import cc.ccoder.circledot.core.common.enums.CommonStatus;
 import cc.ccoder.circledot.core.common.enums.LikeType;
 import cc.ccoder.circledot.core.common.enums.OrderByType;
 import cc.ccoder.circledot.core.common.response.ServerResponse;
+import cc.ccoder.circledot.core.common.util.DateUtil;
 import cc.ccoder.circledot.core.common.util.StringUtils;
+import cc.ccoder.circledot.core.dal.config.IdGenerator;
 import cc.ccoder.circledot.core.dal.entity.*;
 import cc.ccoder.circledot.core.dal.mapper.ArticleMapper;
+import cc.ccoder.circledot.core.sequence.IdKey;
 import cc.ccoder.circledot.service.*;
 import cc.ccoder.circledot.service.converter.TagConverter;
+import cc.ccoder.circledot.service.request.ArticleRequest;
 import cc.ccoder.circledot.service.vo.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Maps;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: chencong
@@ -46,6 +53,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Autowired
     private IReplyService replyService;
 
+    @Autowired
+    private ITagService tagService;
+
+    @Autowired
+    private IdGenerator idGenerator;
 
     @Override
     public List<Article> listArticle() {
@@ -133,7 +145,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public ServerResponse listCommentReply(Long commentId) {
         List<Reply> replyList = replyService.list();
-        if(replyList.isEmpty()){
+        if (replyList.isEmpty()) {
             return ServerResponse.success("该评论暂无回复");
         }
         List<ReplyVo> replyVoList = new ArrayList<>();
@@ -144,5 +156,100 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         });
         return ServerResponse.success(replyVoList);
     }
+
+
+    private List<ArticleVo> handleArticleVo(Page<Article> articlePage) {
+        List<Article> articleList = articlePage.getRecords();
+        List<ArticleVo> articleVoList = new ArrayList<>();
+        for (Article x : articleList) {
+            ArticleVo articleVo = new ArticleVo();
+            articleVo.setArticleId(x.getArticleId());
+            articleVo.setUserId(x.getUserId());
+            User user = userService.getById(x.getUserId());
+            articleVo.setNickname(user == null ? "" : user.getNickname());
+            articleVo.setCategoryId(x.getCategoryId());
+            Category category = categoryService.getById(x.getCategoryId());
+            articleVo.setCategoryName(category == null ? "" : category.getName());
+            articleVo.setTitle(x.getTitle());
+            List<ArticleTag> articleTagList = articleTagService.selectByArticleId(x.getArticleId());
+            Map<Long, String> tags = articleTagList.stream().collect(Collectors.toMap(ArticleTag::getTagId, ArticleTag::getTagName));
+            articleVo.setTags(tags);
+            int likeCount = likeService.countBySourceId(x.getArticleId(), LikeType.ARTICLE);
+            int commentCount = commentService.countByArticleId(x.getArticleId());
+            articleVo.setLike(likeCount);
+            articleVo.setComment(commentCount);
+            articleVoList.add(articleVo);
+        }
+        return articleVoList;
+    }
+
+    @Override
+    public ServerResponse selectArticle(Long userId, String orderBy, Page<Article> page, String order) {
+        Page<Article> articlePage = this.selectByPage(userId, orderBy, page, order);
+        List<ArticleVo> articleVoList = this.handleArticleVo(articlePage);
+        Page<ArticleVo> articleVoPage = new Page<>();
+        BeanUtils.copyProperties(articlePage, articleVoList);
+        articleVoPage.setRecords(articleVoList);
+        articleVoPage.setTotal(articlePage.getTotal());
+        articleVoPage.setSize(articlePage.getSize());
+        articleVoPage.setCurrent(articlePage.getCurrent());
+        articleVoPage.setOrders(articlePage.getOrders());
+        articleVoPage.setSearchCount(articlePage.isSearchCount());
+        articleVoPage.setPages(articlePage.getPages());
+        return ServerResponse.success(articleVoPage);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ServerResponse pushArticle(ArticleRequest request) {
+        Long articleId = idGenerator.get(IdKey.SEQ_ID);
+        List<Tag> tags = tagService.listByIds(request.getTags());
+        //组装articleTag
+        List<ArticleTag> articleTagList = new ArrayList<>();
+        tags.forEach(x -> {
+            ArticleTag articleTag = new ArticleTag();
+            articleTag.setArticleId(articleId);
+            articleTag.setTagId(x.getTagId());
+            articleTag.setTagName(x.getTagName());
+            articleTagList.add(articleTag);
+        });
+        articleTagService.saveBatch(articleTagList);
+
+        //更新tag中文章数
+        tags.forEach(x -> tagService.update(new UpdateWrapper<Tag>().setSql("article_count = article_count + 1").eq("tag_id", x.getTagId())));
+
+        //组装Article
+        Article article = handleArticle(request);
+        article.setArticleId(articleId);
+        this.save(article);
+
+        //组装Like
+        Like like = new Like();
+        like.setLikeType(LikeType.ARTICLE.getCode());
+        like.setSourceId(articleId);
+        like.setUserId(request.getUserId());
+        like.setStatus(CommonStatus.YES.getCode());
+        like.setGmtCreate(DateUtil.getCurrentTS());
+        likeService.save(like);
+        //返回结果
+        Map<String, Long> map = new HashMap<>();
+        map.put("id", articleId);
+        return ServerResponse.success(map);
+    }
+
+    private Article handleArticle(ArticleRequest request) {
+        Article article = new Article();
+        article.setUserId(request.getUserId());
+        article.setCategoryId(request.getCategoryId());
+        article.setTitle(request.getTitle());
+        article.setContent(request.getContext());
+        article.setStatus(CommonStatus.YES.getCode());
+        article.setViewCount(0);
+        article.setViewCount(0);
+        article.setGmtCreate(DateUtil.getCurrentTS());
+        article.setGmtModified(DateUtil.getCurrentTS());
+        return article;
+    }
+
 
 }

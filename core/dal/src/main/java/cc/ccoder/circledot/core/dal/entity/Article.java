@@ -36,12 +36,6 @@ public class Article implements Serializable {
     @TableField(value = "content")
     private String content;
 
-    @TableField(value = "source_content")
-    private String sourceContent;
-
-    @TableField(value = "menu")
-    private String menu;
-
     @TableField(value = "status")
     private String status;
 

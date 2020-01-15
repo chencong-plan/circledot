@@ -48,7 +48,7 @@ public class ServerResponse<T> {
     }
 
     public static <T> ServerResponse success(T data) {
-        return new ServerResponse<T>(data, ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
+        return new ServerResponse<>(data, ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg());
     }
 
     public static <T> ServerResponse success(String message) {

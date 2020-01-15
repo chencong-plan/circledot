@@ -37,7 +37,6 @@ public class ArticleMapperTest {
         article.setTitle("这是标题");
         article.setTitle("测试自动输入");
         article.setContent("这是内容");
-        article.setSourceContent("这是内容");
         article.setGmtCreate(DateUtil.getCurrentTS());
         int insert = articleMapper.insert(article);
         log.info("insert:{}", insert);
