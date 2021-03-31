@@ -31,7 +31,7 @@
         <swagger2-version>2.2.2</swagger2-version>
         <slf4j-api-version>1.7.26</slf4j-api-version>
         <jackson-annotations-version>2.9.10</jackson-annotations-version>
-        <guava-version>28.0-jre</guava-version>
+        <guava-version>29.0-jre</guava-version>
 
     </properties>
 
